@@ -303,8 +303,8 @@ public:
     auto const& get_component() const noexcept;
 private:
     // Some static asserts on the av::member<T> type.
-    static constexpr void check_members();
-    static constexpr auto check_members_trigger = [] { check_members(); return 0; } ();
+    static constexpr auto check_members();
+    static constexpr auto check_members_trigger = check_members();
 
     // Explicit cast to base class.
     members<T>&      base()       noexcept { return *this; }
@@ -373,8 +373,10 @@ private:
 
 // av::vector implementation.
 
+// The check function returns an arbitrary value to be executed at compile-time :
+// The msvc version used don't support constexpr void functions.
 template <class T, class Allocator>
-constexpr void vector<T, Allocator>::check_members() {
+constexpr auto vector<T, Allocator>::check_members() {
     static_assert(!std::is_empty_v<members<T>>,
         "av::members<T> must be specialized to hold "
         "an av::vector_span for each member of T");
@@ -382,6 +384,8 @@ constexpr void vector<T, Allocator>::check_members() {
     static_assert(detail::arity_v<members<T>> <= detail::max_arity,
         "av::members<T> must have less than 'max_arity' members. "
         "This limit can be increased by writing more overloads of 'as_tuple'.");
+    
+    return 0;
 }
 
 // Constructors.
