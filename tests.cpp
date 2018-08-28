@@ -78,7 +78,7 @@ void check_vector_integrity(av::vector<T> const& vec, std::vector<T> const& vec_
     ASSERT_EQ(T, vec.size()    , vec_copy.size());
     ASSERT_EQ(T, vec.capacity(), vec_copy.capacity());
     (check_vector_integrity(
-        vec.get_component<Is>(),
+        vec.template get_component<Is>(),
         make_component_view<Is, sizeof...(Is)>(vec_copy)
     ), ...);
     std::cout << std::endl;

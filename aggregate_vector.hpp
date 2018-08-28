@@ -378,7 +378,7 @@ private:
 // The msvc version used don't support constexpr void functions.
 template <class T, class Allocator>
 constexpr int vector<T, Allocator>::check_members() {
-    
+
     static_assert(!std::is_empty_v<members<T>>,
         "av::members<T> must be specialized to hold "
         "an av::vector_span for each member of T");
@@ -711,7 +711,11 @@ void vector<T, Allocator>::to_zero() noexcept {
 #define AV_PP_MAP_GET_END() 0, AV_PP_EMPTY_ARGS
 
 #define AV_PP_MAP_NEXT0(item, next, ...) next AV_PP_EMPTY
+#if defined(_MSC_VER)
 #define AV_PP_MAP_NEXT1(item, next) AV_PP_EVAL0(AV_PP_MAP_NEXT0 (item, next, 0))
+#else
+#define AV_PP_MAP_NEXT1(item, next) AV_PP_MAP_NEXT0 (item, next, 0)
+#endif
 #define AV_PP_MAP_NEXT(item, next)  AV_PP_MAP_NEXT1 (AV_PP_MAP_GET_END item, next)
 
 #define AV_PP_MAP0(f, n, t, x, peek, ...) f(n, t, x) AV_PP_MAP_NEXT (peek, AV_PP_MAP1) (f, n+1, t, peek, __VA_ARGS__)
