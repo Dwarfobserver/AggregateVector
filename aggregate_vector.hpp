@@ -303,8 +303,9 @@ public:
     auto const& get_component() const noexcept;
 private:
     // Some static asserts on the av::member<T> type.
-    static constexpr auto check_members();
-    static constexpr auto check_members_trigger = check_members();
+    // Workaround MSVC : must returns a value to be constexpr.
+    static constexpr int check_members();
+    static constexpr int check_members_trigger = check_members();
 
     // Explicit cast to base class.
     members<T>&      base()       noexcept { return *this; }
@@ -376,7 +377,8 @@ private:
 // The check function returns an arbitrary value to be executed at compile-time :
 // The msvc version used don't support constexpr void functions.
 template <class T, class Allocator>
-constexpr auto vector<T, Allocator>::check_members() {
+constexpr int vector<T, Allocator>::check_members() {
+    
     static_assert(!std::is_empty_v<members<T>>,
         "av::members<T> must be specialized to hold "
         "an av::vector_span for each member of T");
