@@ -304,7 +304,7 @@ public:
 private:
     // Some static asserts on the av::member<T> type.
     static constexpr void check_members();
-    static constexpr auto check_members_trigger = (check_members(), 0);
+    static constexpr auto check_members_trigger = [] { check_members(); return 0; } ();
 
     // Explicit cast to base class.
     members<T>&      base()       noexcept { return *this; }
