@@ -298,9 +298,9 @@ public:
     bool empty()    const noexcept { return size() == 0; }
 
     template <size_t I>
-    auto& get_component() noexcept;
+    auto& get_span() noexcept;
     template <size_t I>
-    auto const& get_component() const noexcept;
+    auto const& get_span() const noexcept;
 private:
     // Some static asserts on the av::member<T> type.
     // Workaround MSVC : must returns a value to be constexpr.
@@ -562,14 +562,14 @@ void vector<T, Allocator>::pop_back() {
 
 template <class T, class Allocator>
 template <size_t I>
-auto& vector<T, Allocator>::get_component() noexcept {
+auto& vector<T, Allocator>::get_span() noexcept {
     static_assert(I < components_count);
     return std::get<I>(detail::as_tuple(base()));
 }
 
 template <class T, class Allocator>
 template <size_t I>
-auto const& vector<T, Allocator>::get_component() const noexcept {
+auto const& vector<T, Allocator>::get_span() const noexcept {
     static_assert(I < components_count);
     return std::get<I>(detail::as_tuple(base()));
 }
@@ -683,7 +683,7 @@ void vector<T, Allocator>::destroy() noexcept {
 template <class T, class Allocator>
 void vector<T, Allocator>::deallocate() noexcept {
     if (capacity() == 0) return;
-    auto const data = reinterpret_cast<std::byte*>(get_component<0>().ptr_);
+    auto const data = reinterpret_cast<std::byte*>(get_span<0>().ptr_);
     allocator_traits::deallocate(allocator_, data, nb_bytes_);
 }
 

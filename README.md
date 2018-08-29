@@ -7,9 +7,9 @@
 
 This project is an attempt to resolve the usability issues coming when working with structure of arrays rather than array of structures.
 
-This is a single-header library in C++17 for a std::vector-like data structure which separates it's aggregate components into different arrays. It improves performance when there is different access patterns for the aggregate components, and when we want to perform vectorized operations on it's components.
+This single-header library in C++17 implements a std::vector-like data structure which separates it's aggregate components into different arrays. It improves performance when there is different access patterns for the aggregate components, and when we want to perform vectorized operations on it's components.
 
-It works for MSVC, Clang and GCC.
+It works for MSVC-19.14, Clang-5 and GCC-7.2.
 
 Simple usage exemple :
 
@@ -59,3 +59,8 @@ Project limitations :
  - It does not support aggregates with native arrays (eg. T[N], use std::array<T, N> instead).
  - It does not support aggregates with base classes (they are detected as aggregates but can't be destructured).
  - It does not support over-aligned types from the aggregates.
+
+TODO List :
+
+ - Make a tutorial test (getting started)
+ - Document exception garantees and assert suppositions
