@@ -1,6 +1,4 @@
 
-## Under development, no garantees provided until the first release
-
 [![GCC Build Status](https://travis-ci.org/Dwarfobserver/AggregateVector.svg?branch=master)](https://travis-ci.org/Dwarfobserver/AggregateVector) [![MSVC Build Status](https://ci.appveyor.com/api/projects/status/github/Dwarfobserver/AggregateVector?svg=true)](https://ci.appveyor.com/project/Dwarfobserver/aggregatevector) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 # Aggregate vector
