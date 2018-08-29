@@ -362,6 +362,7 @@ private:
     static void move_array(members<T>&       src, members<T>& dst, int nb);
 
     void destroy() noexcept;
+    void destroy(int begin, int end) noexcept;
     void deallocate() noexcept;
 
     // Sets the vector fields (size, capacity, ...) according to an empty vector.
@@ -486,8 +487,11 @@ void vector<T, Allocator>::reserve(int capacity) {
 
 template <class T, class Allocator>
 void vector<T, Allocator>::resize(int size) {
-    if (size <= this->size()) return;
-
+    if (size <= this->size()) {
+        destroy(size, this->size());
+        this->size_ = size;
+        return;
+    }
     reserve(size);
     detail::for_each(detail::as_tuple(base()), [this, size] (auto& span, auto tag) {
         using type = typename decltype(tag)::type;
@@ -502,8 +506,11 @@ void vector<T, Allocator>::resize(int size) {
 
 template <class T, class Allocator>
 void vector<T, Allocator>::resize(int size, T const& value) {
-    if (size <= this->size()) return;
-
+    if (size <= this->size()) {
+        destroy(size, this->size());
+        this->size_ = size;
+        return;
+    }
     reserve(size);
     auto const tuple = detail::as_tuple<components_count>(value);
     detail::for_each(detail::as_tuple(base()), tuple, [this, size] (auto& span, auto& val, auto tag) {
@@ -677,6 +684,16 @@ void vector<T, Allocator>::destroy() noexcept {
     detail::for_each(detail::as_tuple(base()), [] (auto& span, auto tag) {
         using type = typename decltype(tag)::type;
         for (auto& val : span) val.~type();
+    });
+}
+
+template <class T, class Allocator>
+void vector<T, Allocator>::destroy(int begin, int end) noexcept {
+    detail::for_each(detail::as_tuple(base()), [min = begin, max = end] (auto& span, auto tag) {
+        using type = typename decltype(tag)::type;
+        auto it = span.begin() + min;
+        auto const end = span.begin() + max;
+        for (; it < end; ++it) it->~type();
     });
 }
 

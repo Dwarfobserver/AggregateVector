@@ -5,16 +5,22 @@
 
 # Aggregate vector
 
-This project is an attempt to resolve the usability issues coming when working with structure of arrays rather than array of structures.
+This project is an attempt to resolve the usability issues coming when working with structure of arrays rather than array of structures :
 
-This single-header library in C++17 implements a std::vector-like data structure which separates it's aggregate components into different arrays. It improves performance when there is different access patterns for the aggregate components, and when we want to perform vectorized operations on it's components.
+This single-header library in C++17 implements a std::vector-like data structure which separates it's aggregate components into different arrays. It improves performance when there is different access patterns for the aggregate components, or when we want to perform vectorized operations on it's components.
 
-It works for MSVC-19.14, Clang-6 and GCC-7.2.
+It works on MSVC-19.14, Clang-5.0 and GCC-7.2.
 
-Simple usage exemple :
+This project is in early development and prone to change. I'd be happy to receive any feedback on it's design or performance !
+
+Simple exemple usage :
 
 ```cpp
 
+#include <aggregate_vector.hpp>
+#include <iostream>
+
+// We define an aggregate type : a type with only public members, no virtual functions and no constructor.
 namespace user {
     struct person {
         std::string name;
@@ -22,21 +28,37 @@ namespace user {
     };
 }
 
+// We expose the aggregate so it can be used by av::vector.
 AV_DEFINE_TYPE(user::person, name, age);
-/*
-The line above is equivalent to :
-namespace av {
-    template <> struct members<::user::person> {
-        vector_span<0, ::user::person, std::string> name;
-        vector_span<1, ::user::person, int>         age;
-    };
-}
-*/
+// The line above is equivalent to :
+// namespace av {
+//     template <> struct members<::user::person> {
+//         vector_span<0, ::user::person, std::string> name;
+//         vector_span<1, ::user::person, int>         age;
+//     };
+// }
 
-void update(av::vector<user::person>& persons) {
+// We can now manipulate our av::vector.
+av::vector<user::person> make_persons() {
 
-    // Components are accessible with span-like structures through av::vector.
-    for (auto& age : persons.age) ++age;
+    // The semantics are similar to std::vector.
+    // Only one allocation is performed, so the av::vector content looks like this in memory :
+    // [name1, name2, ..., age1, age2, ...]
+    auto persons = av::vector<user::person>{};
+    persons.reserve(2);
+    persons.push_back({ "Jack", 35 });
+    // emplace_back takes components as arguments, or default-construct them.
+    persons.emplace_back("New Born");
+
+    // Components are accessed with their name, through a range structure :
+    // av::vector stores internally a pointer for each component.
+    for (auto& age : persons.age)
+        age += 1;
+    
+    for (auto& name : persons.name)
+        std::cout << "new person : " << name << '\n';
+    
+    return persons;
 }
 
 ```
@@ -59,8 +81,3 @@ Project limitations :
  - It does not support aggregates with native arrays (eg. T[N], use std::array<T, N> instead).
  - It does not support aggregates with base classes (they are detected as aggregates but can't be destructured).
  - It does not support over-aligned types from the aggregates.
-
-TODO List :
-
- - Make a tutorial test (getting started)
- - Document exception garantees and assert suppositions
