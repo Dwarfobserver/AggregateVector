@@ -50,9 +50,9 @@ void check_vector_integrity(Span const& span, Span2 const& span_copy) {
 // Compare size, capacity and values from both vectors.
 template <class T, size_t...Is>
 void check_vector_integrity(av::vector<T> const& vec, std::vector<T> const& vec_copy, std::index_sequence<Is...>) {
-    REQUIRE(vec.empty()    == vec_copy.empty());
-    REQUIRE(vec.size()     == vec_copy.size());
-    REQUIRE(vec.capacity() == vec_copy.capacity());
+    REQUIRE(vec.empty()    == static_cast<int>(vec_copy.empty()));
+    REQUIRE(vec.size()     == static_cast<int>(vec_copy.size()));
+    REQUIRE(vec.capacity() == static_cast<int>(vec_copy.capacity()));
     (check_vector_integrity(
         vec.template get_span<Is>(),
         make_component_view<Is, sizeof...(Is)>(vec_copy)
