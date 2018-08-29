@@ -10,7 +10,7 @@ jobs:
             - llvm-toolchain-trusty-5.0
           packages:
             - clang-5.0
-            - libstdc++5
+            - g++-7 # For libstdc++
             - cmake
       env:
         - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
