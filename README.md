@@ -9,7 +9,7 @@ This project is an attempt to resolve the usability issues coming when working w
 
 This single-header library in C++17 implements a std::vector-like data structure which separates it's aggregate components into different arrays. It improves performance when there is different access patterns for the aggregate components, and when we want to perform vectorized operations on it's components.
 
-It works for MSVC-19.14, Clang-5 and GCC-7.2.
+It works for MSVC-19.14, Clang-6 and GCC-7.2.
 
 Simple usage exemple :
 
