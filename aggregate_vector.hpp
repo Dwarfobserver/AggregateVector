@@ -584,7 +584,7 @@ void vector<T, Allocator>::copy_array(members<T> const& src, members<T>& dst, in
         using type = typename decltype(tag)::type;
         auto it_src = span_src.begin();
         auto it_dst = span_dst.begin();
-        auto const end = span_src.end();
+        auto const end = it_src + nb;
         for (; it_src < end; ++it_src, ++it_dst) {
             new (it_dst) type(*it_src);
         }
@@ -599,7 +599,7 @@ void vector<T, Allocator>::move_array(members<T>& src, members<T>& dst, int nb) 
         using type = typename decltype(tag)::type;
         auto it_src = span_src.begin();
         auto it_dst = span_dst.begin();
-        auto const end = span_src.end();
+        auto const end = it_src + nb;
         for (; it_src < end; ++it_src, ++it_dst) {
             new (it_dst) type(std::move(*it_src));
         }
